@@ -18,6 +18,7 @@ function createWindow() {
         }
       : {
           frame: false,
+          transparent: true,
         }),
   }).on("ready-to-show", (e, ...args) => {
     console.log({ e, args });
