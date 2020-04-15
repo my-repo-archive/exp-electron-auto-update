@@ -1,1 +1,7 @@
+
 node_modules
+pnpm-debug.log
+release
+
+
+.DS_Store
