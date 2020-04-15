@@ -15,21 +15,35 @@ on:
 
 jobs:
   build:
-    name: Publish
-    runs-on: ubuntu-latest
+    name: Build & Publish
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix: # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
+        os: [macos-latest, windows-latest, ubuntu-latest] # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
+        node-version: [12.x]
     # ## functions
     # - https://help.github.com/en/actions/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#functions
     # - https://help.github.com/en/actions/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#contains
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[ci skip]')"
-    strategy:
-      matrix:
-        node-version: [12.x]
-
     steps:
     - uses: actions/checkout@v2 # https://github.com/actions/checkout
       with:
         fetch-depth: 1
-    - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* # https://github.com/actions/checkout#Fetch-all-tags
+
+    - name: setup .npmrc
+      run: |
+        echo "global-dir=$HOME/.config/pnpm/global/" >> ~/.npmrc
+
+    - uses: actions/cache@v1
+      id: pnpm-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      with:
+        path: ${{ env.home }}/.config/pnpm/global
+        key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-
+    - name: pnpm global install
+      run: pnpm i -g electron-builder
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1 # https://github.com/actions/setup-node
@@ -38,7 +52,6 @@ jobs:
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
       run: echo "::set-output name=dir::$(yarn cache dir)"
-
     - uses: actions/cache@v1
       id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
       with:
@@ -52,34 +65,12 @@ jobs:
     #   if: steps.yarn-cache.outputs.cache-hit != 'true'
     #   run: /install.sh
 
-    - name: yarn install, build, and test
+    - name: yarn install
       run: |
         yarn install --frozen-lockfile
-        make prepare
-        # yarn run build --if-present
-        # yarn test
-      # env:
-      #   CI: true
-
-    # https://github.com/semantic-release/npm/blob/1f3ab84a5d05947960be9a7c78642e13fb516496/lib/set-npmrc-auth.js
-    - name: Set NPM AuthToken
+    - name: electron build publish # https://www.electron.build/cli
       run: |
-        echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
-      env:
-        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-    - name: Setup git
-      run: |
-        sed -i -E 's|https://github.com/([[:alnum:]_-]+/[[:alnum:]_-]+)|git@github.com:\1.git|' .git/config
-        git config --global user.email "$EMAIL"
-        git config --global user.name "Github Action"
-        git checkout master
-        git branch -m master
-      env:
-        EMAIL: ${{ secrets.EMAIL }}
-    - name: lerna publish
-      run: |
-        make publish.force
+        electron-builder build --publish
       # yarn --silent lerna changed
       env: # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsenv
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
