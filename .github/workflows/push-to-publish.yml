@@ -48,7 +48,7 @@ jobs:
           ${{ runner.os }}-yarn-global-
     - name: yarn global install if necessary
       run: |
-        if if (! type "electron-builder" > /dev/null) || [ "$(yarn --silent info electron-builder version)" != "$(electron-builder --version)" ]; then
+        if (! type "electron-builder" > /dev/null) || [ "$(yarn --silent info electron-builder version)" != "$(electron-builder --version)" ]; then
           yarn global add electron-builder
         fi
 
