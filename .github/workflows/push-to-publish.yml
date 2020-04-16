@@ -162,8 +162,8 @@ jobs:
 
     - name: (win) Move artifacts
       run: |
-        mkdir artifact
-        mv release/*.exe artifact
+        mkdir artifact \
+          && mv release/*.exe artifact || true
     - name: Upload artifacts
       uses: actions/upload-artifact@v1
       with:
