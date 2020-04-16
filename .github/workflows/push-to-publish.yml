@@ -61,6 +61,8 @@ jobs:
       env: # https://www.electron.build/code-signing.html#how-to-disable-code-signing-during-the-build-process-on-macos
         CSC_LINK: ${{ secrets.CSC_LINK }}
         CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+    - name: Check signing identity
+      run: security find-identity -v
 
     - name: yarn global install if necessary
       run: |
