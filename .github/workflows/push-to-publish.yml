@@ -20,8 +20,8 @@ jobs:
 
     strategy:
       matrix: # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
-        os: [macos-latest]
-        # os: [macos-latest, ubuntu-latest] # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
+        # os: [macos-latest]
+        os: [macos-latest, ubuntu-latest] # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
         node-version: [12.x]
     # ## functions
     # - https://help.github.com/en/actions/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#functions
