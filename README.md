@@ -1,3 +1,5 @@
+![Electron publish!](https://github.com/ken0x0a/exp-electron-auto-update/workflows/Electron%20publish!/badge.svg)
+
 # electron-quick-start
 
 **Clone and run for a quick way to see Electron in action.**
