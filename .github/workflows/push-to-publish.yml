@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix: # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
-        os: [macos-latest, windows-latest, ubuntu-latest] # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
+        os: [macos-latest, ubuntu-latest] # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
         node-version: [12.x]
     # ## functions
     # - https://help.github.com/en/actions/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#functions
@@ -53,18 +53,77 @@ jobs:
         if (! type "electron-builder" > /dev/null) || [ "$(yarn --silent info electron-builder version)" != "$(electron-builder --version)" ]; then
           yarn global add electron-builder
         fi
-    - name: yarn global install if necessary
-      if: matrix.os == 'windows-latest'
+
+    - name: Append "yarn global bin directory" to PATH
+      id: set-env-yarn-global-bin
+      run: echo "::set-env name=PATH::$PATH:$(yarn global bin)"
+
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+    - uses: actions/cache@v1
+      id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    # step "yarn-cache" just restore `cache dir` of yarn & not "node_modules" dirs
+    # - name: Install Dependencies
+    #   if: steps.yarn-cache.outputs.cache-hit != 'true'
+    #   run: /install.sh
+
+    - name: yarn install
+      run: |
+        yarn install --frozen-lockfile
+    - name: electron build # https://www.electron.build/cli
+      run: |
+        electron-builder build --publish always
+      env: # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsenv
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-win:
+    name: Build & Publish (Windows)
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix: # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
+        os: [windows-latest] # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
+        node-version: [12.x]
+    # ## functions
+    # - https://help.github.com/en/actions/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#functions
+    # - https://help.github.com/en/actions/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#contains
+    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[ci skip]')"
+    steps:
+    - uses: actions/checkout@v2 # https://github.com/actions/checkout
+      with:
+        fetch-depth: 1
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1 # https://github.com/actions/setup-node
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Get yarn cache directory path
+      id: yarn-global-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn global dir)"
+    - uses: actions/cache@v1
+      id: yarn-global-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      with:
+        path: ${{ steps.yarn-global-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-global-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-global-
+
+    - name: (win) yarn global install if necessary
       run: |
         yarn global add electron-builder
 
     # This doesn't work for Windows
-    # - name: Append "yarn global bin directory" to PATH
-    #   id: set-env-yarn-global-bin
-    #   run: echo "::set-env name=PATH::$PATH:$(yarn global bin)"
     - name: "yarn global bin directory"
       id: yarn-global-bin
-      run: echo "::set-env name=dir::$(yarn global bin)"
+      run: echo "::set-output name=dir::$(yarn global bin)"
 
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
@@ -88,7 +147,7 @@ jobs:
     - name: electron build # https://www.electron.build/cli
       # ${{ steps.yarn-global-bin.outputs.dir }}/electron-builder build --publish always
       run: |
-        yarn electron-builder build --publish always
+         ${{ steps.yarn-global-bin.outputs.dir }}/electron-builder build --publish always
       # yarn --silent lerna changed
       env: # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsenv
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
