@@ -46,11 +46,18 @@ jobs:
         key: ${{ runner.os }}-yarn-global-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-global-
+
     - name: yarn global install if necessary
+      if: matrix.os != 'windows-latest'
       run: |
         if (! type "electron-builder" > /dev/null) || [ "$(yarn --silent info electron-builder version)" != "$(electron-builder --version)" ]; then
           yarn global add electron-builder
         fi
+    - name: yarn global install if necessary
+      if: matrix.os == 'windows-latest'
+      run: |
+        yarn global add electron-builder
+
     - name: Append "yarn global bin directory" to PATH
       id: set-env-yarn-global-bin
       run: echo "::set-env name=PATH::$PATH:$(yarn global bin)"
