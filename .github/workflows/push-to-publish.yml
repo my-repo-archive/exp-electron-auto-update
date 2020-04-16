@@ -121,12 +121,13 @@ jobs:
       run: |
         yarn global add electron-builder
 
-    - name: Append "yarn global bin directory" to PATH
-      id: set-env-yarn-global-bin
-      run: echo "::set-env name=PATH::$(PATH);$(yarn global bin)"
-    # - name: "yarn global bin directory"
-    #   id: yarn-global-bin
-    #   run: echo "::set-output name=dir::$(yarn global bin)"
+    # Couldn't make it work on Windows
+    # - name: Append "yarn global bin directory" to PATH
+    #   id: set-env-yarn-global-bin
+    #   run: echo "::set-env name=PATH::$(PATH);$(yarn global bin)"
+    - name: "yarn global bin directory"
+      id: yarn-global-bin
+      run: echo "::set-output name=dir::$(yarn global bin)"
 
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
@@ -139,19 +140,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-yarn-
 
-    # step "yarn-cache" just restore `cache dir` of yarn & not "node_modules" dirs
-    # - name: Install Dependencies
-    #   if: steps.yarn-cache.outputs.cache-hit != 'true'
-    #   run: /install.sh
-
     - name: yarn install
       run: |
         yarn install --frozen-lockfile
     - name: electron build # https://www.electron.build/cli
-      # ${{ steps.yarn-global-bin.outputs.dir }}/electron-builder build --publish always
       run: |
-        electron-builder build --publish always
-      # yarn --silent lerna changed
+        ${{ steps.yarn-global-bin.outputs.dir }}/electron-builder build --publish always
       env: # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsenv
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Cleanup meta files # Reference https://gist.github.com/azu/673426500458f63f019c8f5e013f282a
