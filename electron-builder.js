@@ -12,7 +12,7 @@ const config = {
   files: [
     // "**/*",
     "dist/**/*",
-    "!node_modules/*",
+    // "!node_modules/*",
     "!src/*",
     "!e2e/*",
   ],
@@ -24,7 +24,7 @@ const config = {
     files: [
       // "**/*",
       "dist/**/*",
-      "!node_modules/*",
+      // "!node_modules/*",
       "!src/*",
       "!e2e/*",
     ],

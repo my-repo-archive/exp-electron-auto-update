@@ -1,8 +1,8 @@
 {
   "name": "electron-quick-start",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A minimal Electron application",
-  "main": "dist/main.js",
+  "main": "dist/updater.js",
   "scripts": {
     "start": "electron ."
   },
@@ -17,6 +17,12 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^8.2.1"
+    "cli": "1.0.1",
+    "electron": "^8.2.1",
+    "webpack": "4.42.1"
+  },
+  "dependencies": {
+    "electron-log": "4.1.1",
+    "electron-updater": "4.2.5"
   }
 }
