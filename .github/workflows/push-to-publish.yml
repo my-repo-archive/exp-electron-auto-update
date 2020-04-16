@@ -154,8 +154,7 @@ jobs:
       # yarn --silent lerna changed
       env: # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsenv
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    # https://gist.github.com/azu/673426500458f63f019c8f5e013f282a
-    - name: Cleanup meta files
+    - name: Cleanup meta files # Reference https://gist.github.com/azu/673426500458f63f019c8f5e013f282a
       run: |
         npx rimraf "release/!(*.exe|*.deb|*.AppImage|*.dmg)"
     - uses: actions/upload-artifact@v1
