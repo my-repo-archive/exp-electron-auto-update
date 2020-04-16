@@ -31,24 +31,27 @@ jobs:
       with:
         fetch-depth: 1
 
-    - name: setup .npmrc
-      run: |
-        echo "global-dir=$HOME/.config/pnpm/global/" >> ~/.npmrc
-
-    - uses: actions/cache@v1
-      id: pnpm-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-      with:
-        path: ${{ env.home }}/.config/pnpm/global
-        key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-
-    - name: pnpm global install
-      run: npx pnpm i -g pnpm electron-builder
-
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1 # https://github.com/actions/setup-node
       with:
         node-version: ${{ matrix.node-version }}
+
+    - name: Get yarn cache directory path
+      id: yarn-global-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn global dir)"
+    - uses: actions/cache@v1
+      id: yarn-global-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      with:
+        path: ${{ steps.yarn-global-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-global-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-global-
+    - name: yarn global install if necessary
+      run: |
+        if if (! type "electron-builder" > /dev/null) || [ "$(yarn --silent info electron-builder version)" != "$(electron-builder --version)" ]; then
+          yarn global add electron-builder
+        fi
+
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
       run: echo "::set-output name=dir::$(yarn cache dir)"
