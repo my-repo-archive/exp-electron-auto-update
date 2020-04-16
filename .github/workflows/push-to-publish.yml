@@ -76,7 +76,7 @@ jobs:
         yarn install --frozen-lockfile
     - name: electron build # https://www.electron.build/cli
       run: |
-        electron-builder build --publish
+        electron-builder build --publish always
       # yarn --silent lerna changed
       env: # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsenv
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
