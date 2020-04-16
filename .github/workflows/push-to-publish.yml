@@ -160,6 +160,9 @@ jobs:
       env: # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsenv
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: (win) Make artifact directory
+      run: |
+        ls release
     # - name: (win) Make artifact directory
     #   run: |
     #     mkdir artifact
