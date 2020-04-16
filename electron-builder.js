@@ -29,6 +29,15 @@ const config = {
       "!e2e/*",
     ],
   },
+  win: {
+    target: ["nsis", "squirrel"],
+    icon: "./dist/icon.ico",
+  },
+  linux: {
+    target: ["AppImage"],
+    category: "Office",
+  },
+
   publish: [
     {
       provider: "github",
