@@ -41,6 +41,7 @@ const config = {
   publish: [
     {
       provider: "github",
+      releaseType: "release",
       owner: "ken0x0a",
       repo: "exp-electron-auto-update",
     },
