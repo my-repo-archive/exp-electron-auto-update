@@ -78,6 +78,13 @@ function createDefaultWindow() {
     win = null;
   });
   win.loadFile(`${__dirname}/index.html`);
+  win.on("ready-to-show", () => {
+    setTimeout(() => {
+      
+      sendStatusToWindow('App ready-to-show');
+    }, 2000);
+
+  })
   // win.loadURL(`file://${__dirname}/version.html#v${app.getVersion()}`);
   return win;
 }
