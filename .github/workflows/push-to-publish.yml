@@ -133,12 +133,12 @@ jobs:
         yarn global add electron-builder electron-builder-squirrel-windows
 
     # Couldn't make it work on Windows
-    # - name: Append "yarn global bin directory" to PATH
-    #   id: set-env-yarn-global-bin
-    #   run: echo "::set-env name=PATH::$(PATH);$(yarn global bin)"
-    - name: "yarn global bin directory"
-      id: yarn-global-bin
-      run: echo "::set-output name=dir::$(yarn global bin)"
+    - name: Append "yarn global bin directory" to PATH
+      id: set-env-yarn-global-bin
+      run: echo "::set-env name=PATH::$env:PATH;$(yarn global bin)" # https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets
+    # - name: "yarn global bin directory"
+    #   id: yarn-global-bin
+    #   run: echo "::set-output name=dir::$(yarn global bin)"
 
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
@@ -156,7 +156,8 @@ jobs:
         yarn install --frozen-lockfile
     - name: electron build # https://www.electron.build/cli
       run: |
-        ${{ steps.yarn-global-bin.outputs.dir }}/electron-builder build --publish always
+        electron-builder build --publish always
+      # ${{ steps.yarn-global-bin.outputs.dir }}/electron-builder build --publish always
       env: # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsenv
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
