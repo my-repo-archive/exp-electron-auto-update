@@ -43,7 +43,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pnpm-
     - name: pnpm global install
-      run: pnpm i -g electron-builder
+      run: npx pnpm i -g pnpm electron-builder
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1 # https://github.com/actions/setup-node
@@ -68,9 +68,9 @@ jobs:
     - name: yarn install
       run: |
         yarn install --frozen-lockfile
-    - name: electron build publish # https://www.electron.build/cli
+    - name: electron build # https://www.electron.build/cli
       run: |
         electron-builder build --publish
       # yarn --silent lerna changed
       env: # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsenv
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
