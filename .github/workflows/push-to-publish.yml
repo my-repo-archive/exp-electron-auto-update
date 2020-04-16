@@ -123,7 +123,7 @@ jobs:
 
     - name: Append "yarn global bin directory" to PATH
       id: set-env-yarn-global-bin
-      run: echo "::set-env name=PATH::$PATH;$(yarn global bin)"
+      run: echo "::set-env name=PATH::$(PATH);$(yarn global bin)"
     # - name: "yarn global bin directory"
     #   id: yarn-global-bin
     #   run: echo "::set-output name=dir::$(yarn global bin)"
