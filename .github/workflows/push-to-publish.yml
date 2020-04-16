@@ -160,17 +160,17 @@ jobs:
       env: # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsenv
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: (win) Make artifact directory
-      run: |
-        mkdir artifact
-    - name: (win) Move artifacts
-      run: |
-        mv release/{*.exe,*.yaml} artifact/ || true
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v1
-      with:
-        name: ${{matrix.os}}
-        path: artifact
+    # - name: (win) Make artifact directory
+    #   run: |
+    #     mkdir artifact
+    # - name: (win) Move artifacts
+    #   run: |
+    #     mv release/{*.exe,*.yaml} artifact/ || true
+    # - name: Upload artifacts
+    #   uses: actions/upload-artifact@v1
+    #   with:
+    #     name: ${{matrix.os}}
+    #     path: artifact
     # - name: Cleanup meta files # Reference https://gist.github.com/azu/673426500458f63f019c8f5e013f282a
     #   run: |
     #     npx rimraf "release/!(*.exe|*.deb|*.AppImage|*.dmg)"
