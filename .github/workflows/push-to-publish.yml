@@ -48,8 +48,16 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-yarn-global-
 
+    - name: (Mac) set codesigning identity
+      if: matrix.os == 'macos-latest'
+      run: |
+        mkdir .secret
+        echo $CSC_LINK > .secret/id.p12
+        security import .secret/id.p12 -P ${{ secrets.CSC_KEY_PASSWORD }}
+      env: # https://www.electron.build/code-signing.html#how-to-disable-code-signing-during-the-build-process-on-macos
+        CSC_LINK: ${{ secrets.CSC_KEY_PASSWORD }}
+
     - name: yarn global install if necessary
-      if: matrix.os != 'windows-latest'
       run: |
         if (! type "electron-builder" > /dev/null) || [ "$(yarn --silent info electron-builder version)" != "$(electron-builder --version)" ]; then
           yarn global add electron-builder
