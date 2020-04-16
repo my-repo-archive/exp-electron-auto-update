@@ -52,10 +52,11 @@ jobs:
       if: matrix.os == 'macos-latest'
       run: |
         mkdir .secret
-        echo $CSC_LINK > .secret/id.p12
+        echo "$CSC_LINK" > .secret/id
+        openssl base64 -d -in .secret/id -out .secret/id.p12
         security import .secret/id.p12 -P ${{ secrets.CSC_KEY_PASSWORD }}
       env: # https://www.electron.build/code-signing.html#how-to-disable-code-signing-during-the-build-process-on-macos
-        CSC_LINK: ${{ secrets.CSC_KEY_PASSWORD }}
+        CSC_LINK: ${{ secrets.CSC_LINK }}
 
     - name: yarn global install if necessary
       run: |
