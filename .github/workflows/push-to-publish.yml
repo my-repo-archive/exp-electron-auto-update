@@ -51,6 +51,9 @@ jobs:
         if (! type "electron-builder" > /dev/null) || [ "$(yarn --silent info electron-builder version)" != "$(electron-builder --version)" ]; then
           yarn global add electron-builder
         fi
+    - name: Append "yarn global bin directory" to PATH
+      id: set-env-yarn-global-bin
+      run: echo "::set-env name=PATH::$PATH:$(yarn global bin)"
 
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
