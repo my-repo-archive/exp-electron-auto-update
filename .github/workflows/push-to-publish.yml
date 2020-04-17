@@ -59,10 +59,15 @@ jobs:
       id: set-env-yarn-global-bin
       run: echo "::set-env name=PATH::$PATH:$(yarn global bin)"
 
+    # 
+    # Skip yarn cache for macOS as it task too long time on GitHub Actions
+    # 
     - name: Get yarn cache directory path
+      if: matrix.os != 'macos-latest'
       id: yarn-cache-dir-path
       run: echo "::set-output name=dir::$(yarn cache dir)"
     - uses: actions/cache@v1
+      if: matrix.os != 'macos-latest'
       id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
       with:
         path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -196,11 +201,12 @@ jobs:
       shell: bash
       run: |
         mv release/{*.exe,*.yaml} artifact/ || true
-    # - name: Upload artifacts
-    #   uses: actions/upload-artifact@v1
-    #   with:
-    #     name: ${{matrix.os}}
-    #     path: artifact
+        mv 'release/Electron auto update test 1.0.7.appx' artifact/ || true
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: ${{matrix.os}}
+        path: artifact
     # - name: Cleanup meta files # Reference https://gist.github.com/azu/673426500458f63f019c8f5e013f282a
     #   run: |
     #     npx rimraf "release/!(*.exe|*.deb|*.AppImage|*.dmg)"
