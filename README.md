@@ -44,4 +44,6 @@ Note: If you're using Linux Bash for Windows, [see this guide](https://www.howto
 
 ## License
 
-[CC0 1.0 (Public Domain)](LICENSE.md)
+[MIT](LICENSE.md) for very limited code.
+
+The code I copied from [electron-quick-start](https://github.com/electron/electron-quick-start) is licensed under CC0.
