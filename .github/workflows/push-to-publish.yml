@@ -106,6 +106,7 @@ jobs:
         mkdir artifact
         mv release/{*.deb,*.AppImage,*.dmg,*.yaml} artifact/ || true
     - name: Upload artifacts
+      if: failure()
       uses: actions/upload-artifact@v1
       with:
         name: ${{matrix.os}}
@@ -177,15 +178,20 @@ jobs:
       env: # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsenv
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: (win) Make artifact directory
+    - name: (win) Check directory
       run: |
         ls release
-    # - name: (win) Make artifact directory
-    #   run: |
-    #     mkdir artifact
-    # - name: (win) Move artifacts
-    #   run: |
-    #     mv release/{*.exe,*.yaml} artifact/ || true
+    - name: (win) Make artifact directory
+      run: |
+        mkdir artifact
+    - name: set path
+      run: echo "::set-env name=PATH::$env:PATH;C:\Program Files\Git\bin" # https://github.community/t5/GitHub-Actions/How-do-I-install-bash-on-my-Windows-local-runner/m-p/44151
+        
+    # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#using-a-specific-shell
+    - name: (win) Move artifacts
+      shell: bash
+      run: |
+        mv release/{*.exe,*.yaml} artifact/ || true
     # - name: Upload artifacts
     #   uses: actions/upload-artifact@v1
     #   with:
