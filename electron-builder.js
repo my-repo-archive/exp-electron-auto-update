@@ -44,15 +44,16 @@ const config = {
     // target: ["appx", "nsis", "squirrel"],
     icon: "./dist/icon.ico",
   },
-  // appx: {
-  //   // https://www.electron.build/configuration/appx
-  //   applicationId: appId,
-  //   showNameOnTiles: true,
-  //   addAutoLaunchExtension: true,
-  //   backgroundColor: true,
-  //   publisherDisplayName: "Ken Owada",
-  //   // language: ""
-  // },
+  appx: {
+    identityName: "myappyeyeyey",
+    // // https://www.electron.build/configuration/appx
+    // applicationId: appId,
+    // showNameOnTiles: true,
+    // addAutoLaunchExtension: true,
+    // backgroundColor: true,
+    // publisherDisplayName: "Ken Owada",
+    // // language: ""
+  },
   linux: {
     target: ["AppImage"],
     category: "Office",
