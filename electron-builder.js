@@ -37,7 +37,6 @@ const config = {
     target: ["AppImage"],
     category: "Office",
   },
-
   publish: [
     {
       provider: "github",
