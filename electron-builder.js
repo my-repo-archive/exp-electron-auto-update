@@ -2,9 +2,10 @@
 // https://gist.github.com/LordA98/39f209af29d3c40fef10f25e396b58b7
 // https://github.com/bdash-app/bdash/blob/master/electron-builder.yml
 
+const appId = "com.kenowada.test";
 const config = {
   productName: "Electron auto update test",
-  appId: "com.kenowada.test",
+  appId,
   directories: {
     output: "release",
     buildResources: "dist",
@@ -43,11 +44,15 @@ const config = {
     // target: ["appx", "nsis", "squirrel"],
     icon: "./dist/icon.ico",
   },
-  appx: {
-    showNameOnTiles: true,
-    addAutoLaunchExtension: true,
-    // backgroundColor: true
-  },
+  // appx: {
+  //   // https://www.electron.build/configuration/appx
+  //   applicationId: appId,
+  //   showNameOnTiles: true,
+  //   addAutoLaunchExtension: true,
+  //   backgroundColor: true,
+  //   publisherDisplayName: "Ken Owada",
+  //   // language: ""
+  // },
   linux: {
     target: ["AppImage"],
     category: "Office",
