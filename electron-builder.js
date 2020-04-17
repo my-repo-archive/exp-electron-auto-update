@@ -33,7 +33,7 @@ const config = {
     hardenedRuntime: true, // https://developer.apple.com/documentation/security/hardened_runtime
     entitlements: "build/entitlements.mac.plist",
     entitlementsInherit: "build/entitlements.mac.plist",
-    // appId: "com.kenowada.test",
+    appId: "com.kenowada.test",
   },
   dmg: {
     sign: false,
@@ -46,7 +46,7 @@ const config = {
   appx: {
     showNameOnTiles: true,
     addAutoLaunchExtension: true,
-    backgroundColor: true,
+    // backgroundColor: true
   },
   linux: {
     target: ["AppImage"],
