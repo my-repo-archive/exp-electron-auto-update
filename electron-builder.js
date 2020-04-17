@@ -23,15 +23,30 @@ const config = {
     target: ["dmg"],
     files: [
       // "**/*",
+      "build/**/*",
       "dist/**/*",
       // "!node_modules/*",
       "!src/*",
       "!e2e/*",
     ],
+    // notarization // https://kilianvalkhof.com/2019/electron/notarizing-your-electron-application/
+    hardenedRuntime: true, // https://developer.apple.com/documentation/security/hardened_runtime
+    entitlements: "build/entitlements.mac.plist",
+    entitlementsInherit: "build/entitlements.mac.plist",
+    // appId: "com.kenowada.test",
+  },
+  dmg: {
+    sign: false,
   },
   win: {
-    target: ["nsis", "squirrel"],
+    target: ["appx"],
+    // target: ["appx", "nsis", "squirrel"],
     icon: "./dist/icon.ico",
+  },
+  appx: {
+    showNameOnTiles: true,
+    addAutoLaunchExtension: true,
+    backgroundColor: true,
   },
   linux: {
     target: ["AppImage"],
@@ -45,5 +60,8 @@ const config = {
       repo: "exp-electron-auto-update",
     },
   ],
+  // notarization // https://kilianvalkhof.com/2019/electron/notarizing-your-electron-application/
+  // hook
+  // afterSign: "scripts/notarize.js",
 };
 module.exports = config;
