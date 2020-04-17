@@ -17,7 +17,8 @@ jobs:
   build:
     name: Build & Publish
     runs-on: ${{ matrix.os }}
-
+    env:
+      KEYCHAIN_NAME: /Library/Keychains/System.keychain
     strategy:
       matrix: # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
         # os: [macos-latest]
@@ -48,22 +49,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-yarn-global-
 
-    - name: (Mac) set codesigning identity
-      if: matrix.os == 'macos-latest'
-      run: |
-        mkdir .secret
-        echo "$CSC_LINK" > .secret/id
-        openssl base64 -d -in .secret/id -out .secret/id.p12
-        security import .secret/id.p12 -P $(cat <<-EOF
-        $CSC_KEY_PASSWORD
-        EOF)
-      env: # https://www.electron.build/code-signing.html#how-to-disable-code-signing-during-the-build-process-on-macos
-        CSC_LINK: ${{ secrets.CSC_LINK }}
-        CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-    - name: Check signing identity
-      if: matrix.os == 'macos-latest'
-      run: security find-identity -v
-
     - name: yarn global install if necessary
       run: |
         if (! type "electron-builder" > /dev/null) || [ "$(yarn --silent info electron-builder version)" != "$(electron-builder --version)" ]; then
@@ -93,12 +78,31 @@ jobs:
     - name: yarn install
       run: |
         yarn install --frozen-lockfile
+
+    # - name: (Mac) set codesigning identity
+    #   if: matrix.os == 'macos-latest'
+    #   run: |
+    #     mkdir .secret
+    #     echo "$CSC_LINK" > .secret/id
+    #     openssl base64 -d -in .secret/id -out .secret/id.p12
+    #     security import .secret/id.p12 -P $(cat <<-EOF
+    #     $CSC_KEY_PASSWORD
+    #     EOF) -k $KEYCHAIN_NAME
+    #   env: # https://www.electron.build/code-signing.html#how-to-disable-code-signing-during-the-build-process-on-macos
+    #     CSC_LINK: ${{ secrets.CSC_LINK }}
+    #     CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+    # - name: Check signing identity
+    #   if: matrix.os == 'macos-latest'
+    #   run: security find-identity -v
+
     - name: electron build # https://www.electron.build/cli
       run: |
         electron-builder build --publish always
       env: # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsenv
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DEBUG: electron-builder
+        CSC_LINK: ${{ secrets.CSC_LINK }}
+        CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
 
     - name: Move artifacts
       if: matrix.os != 'windows-latest'
