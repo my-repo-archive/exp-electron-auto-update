@@ -198,9 +198,9 @@ jobs:
         
     # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#using-a-specific-shell
     - name: (win) Move artifacts
-      shell: bash
+      shell: bash # https://github.community/t5/GitHub-Actions/How-do-I-install-bash-on-my-Windows-local-runner/m-p/44262#M5698
       run: |
-        mv release/{*.exe,*.yaml} artifact/ || true
+        mv release/{*.exe,*.yaml,*.appx} artifact/ || true
         mv 'release/Electron auto update test 1.0.7.appx' artifact/ || true
     - name: Upload artifacts
       uses: actions/upload-artifact@v1
