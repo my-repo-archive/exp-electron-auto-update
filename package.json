@@ -4,9 +4,10 @@
   "description": "A minimal Electron application",
   "main": "dist/updater.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder build"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/ken0x0a/exp-electron-auto-update",
   "keywords": [
     "Electron",
     "quick",
@@ -18,7 +19,9 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "cli": "1.0.1",
+    "dotenv": "8.2.0",
     "electron": "^8.2.1",
+    "electron-notarize": "0.3.0",
     "webpack": "4.42.1"
   },
   "dependencies": {
